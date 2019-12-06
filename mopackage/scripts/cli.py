@@ -78,7 +78,8 @@ def delete_project(project_id):
     if (not token):
         print("Please log in first.")
     else:
-        httprequests.delete_project(token, project_id)
+        if click.confirm("是否确认删除该项目？"):
+            httprequests.delete_project(token, project_id)
   except:
     print ('Unexpected Error')
 

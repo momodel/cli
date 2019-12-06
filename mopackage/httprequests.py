@@ -2,19 +2,18 @@ import requests
 import os
 import progressbar
 
-URL = "http://momodel.cn/pyapi"
+URL = "https://momodel.cn/pyapi"
 
 def login(username, password):
     response = requests.post(
         URL + '/user/login', json={"username": username, "password": password})
     if (response.status_code == 200):
         # successful login
-        print("Authentication succeeded")
+        print("登陆成功！")
         return response.json()['token']
-    if (response.status_code == 400):
-        print("Incorrect username/password")
+    if 'message' in response.json():
+        print (response.json()['message'])
         return
-    print("Unknown error occured.")
 
 
 def view_project_list(token):
@@ -48,7 +47,7 @@ def delete_project(token, project_id):
         URL + '/project/projects/' + project_id, headers={"Authorization": token})
     json = response.json()
     if (response.status_code == 200):
-        print('Project removed successfully.')
+        print('项目删除成功')
     else:
       print(json['message'])
 
