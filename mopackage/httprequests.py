@@ -76,7 +76,7 @@ def view_job(token, project_type, project_id):
                           % (object['display_name'], object['_id'], object['env'], object['script_path'], object['duration'], object['start_time'], object['status']))
           print('------------')
       else:
-        print ('No job at the moment')
+        print ('该项目下当前无Job')
     else:
       print (json['message'])
 
@@ -94,16 +94,16 @@ def create_job(token, parameters):
         URL + '/jobs', json=parameters, headers={"Authorization": token}, )
     json = response.json()
     if (response.status_code == 200):
-      print ('Job created successfully')
+      print ('Job创建成功，Job ID为%s, Job名称为%s' % (json['response']['_id'], json['response']['display_name']))
     else:
       print (json['message'])
 
 def terminate_job(token, job_id):
-    response = requests.put(URL + '/jobs/logs/%s/terminate' %
+    response = requests.put(URL + '/jobs/%s/terminate' %
                             job_id, headers={"Authorization": token})
     json = response.json()
     if (response.status_code == 200):
-      print ('Job terminated successfully')
+      print ('Job终止成功！')
     else:
       print (json['message'])
 
