@@ -15,6 +15,15 @@ def login(username, password):
         print (response.json()['message'])
         return
 
+def account_statistics(token):
+    response = requests.get(URL + '/refresh_token', headers={"Authorization": token})
+    user_info = response.json()['response']['user']
+    username = user_info['_rocket_chat_name']
+    app_number = user_info['app_number']
+    dataset_number = user_info['dataset_number']
+    gpu_time_limit = user_info['gpu_time_limit']
+    print ('用户 %s 拥有 %s 个项目及 %s 个数据集 GPU剩余时长为 %s ' % (username, app_number,
+           dataset_number, gpu_time_limit))
 
 def view_project_list(token):
     response = requests.get(URL + '/project?page_no=1&page_size=5&type=app&group=my', headers={"Authorization": token},
@@ -83,6 +92,7 @@ def view_job(token, project_type, project_id):
 def view_job_log(token, job_id):
     response = requests.get(URL + '/jobs/logs/%s' %
                             job_id, headers={"Authorization": token})
+    print (response)
     json = response.json()
     if (response.status_code == 200):
       print (json['logs'])
@@ -106,6 +116,15 @@ def terminate_job(token, job_id):
       print ('Job终止成功！')
     else:
       print (json['message'])
+
+def download_job_log(token, job_id):
+  # TODO: Change download directory
+  response = requests.get(URL + '/jobs/logs/%s/download' % job_id, headers={"Authorization": token})
+  log = response.content
+  log_dir = 'log_' + str(job_id)
+  f = open(log_dir, 'wb')
+  f.write(log)
+  f.close()
 
 def read_in_chunks(file_object, chunk_size=65536):
     while True:
@@ -149,3 +168,8 @@ def upload_file(token, project_id, file_path):
         bar.update(chunk_index)
     bar.finish()
     print ('Upload finished!')
+
+def delete_file(token, project_id, file_path):
+    r = requests.delete(URL + "/file/%s" % file_path)
+    print (r)
+    print (r.json())

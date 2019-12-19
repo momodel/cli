@@ -39,6 +39,16 @@ def auth():
         print(e)
         print("Unexpected Error")
 
+@account.command()
+def account_status():
+  try:
+    token = get_stored_token()
+    if not token:
+      print("Please log in first.")
+    else:
+      httprequests.account_statistics(token)
+  except Exception as e:
+    print(e)
 
 @click.group()
 def project_management():
@@ -113,6 +123,14 @@ def upload_file(project_id, file_path):
     except:
         print('Unexpected Error')
 
+@file_management.command()
+@click.argument('project_id')
+@click.argument('file_path')
+def delete_file(project_id, file_path):
+  try:
+    httprequests.delete_file(get_stored_token(), project_id, file_path)
+  except:
+    print ('unexpected error')
 
 @click.group()
 def job_management():
@@ -145,7 +163,6 @@ def view_job_log(job_id):
             httprequests.view_job_log(token, job_id)
     except:
         print('Unexpected Error')
-
 
 @job_management.command()
 def create_job():
@@ -186,7 +203,6 @@ def create_job():
     except:
         print('Unexpected Error')
 
-
 @job_management.command()
 @click.argument('job_id')
 def terminate_job(job_id):
@@ -201,6 +217,18 @@ def terminate_job(job_id):
         print (e)
         print('Unexpected Error')
 
+@job_management.command()
+@click.argument('job_id')
+def download_job_log(job_id):
+  try:
+    token = get_stored_token()
+    if not token:
+      print("Please log in first.")
+    else:
+      httprequests.download_job_log(token, job_id)
+  except Exception as e:
+    print (e)
+    print('Unexpected Error')
 
 cli = click.CommandCollection(
     sources=[account, project_management, file_management, job_management])
